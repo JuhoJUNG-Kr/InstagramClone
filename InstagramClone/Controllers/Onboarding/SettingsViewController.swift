@@ -5,6 +5,7 @@
 //  Created by 정주호 on 06/12/2022.
 //
 
+import SafariServices
 import UIKit
 
 struct settingCellModel {
@@ -39,14 +40,76 @@ final class SettingsViewController: UIViewController {
     }
     
     private func configureModels() {
-        let section = [
+        data.append([
+            settingCellModel(title: "Edit Profile",
+                             handler: { [weak self] in
+                                 self?.didTapEditProfile()
+                             }),
+            settingCellModel(title: "Invite Friends",
+                             handler: { [weak self] in
+                                 self?.didTapInviteFriends()
+                             }),
+            settingCellModel(title: "Save Original Posts",
+                             handler: { [weak self] in
+                                 self?.didTapSaveOriginalPosts()
+                             })
+        ])
+        data.append([
+            settingCellModel(title: "Terms of Service",
+                             handler: { [weak self] in
+                                 self?.openURL(type: .terms)
+                             }),
+            settingCellModel(title: "Privacy Policy",
+                             handler: { [weak self] in
+                                 self?.openURL(type: .privacy)
+                             }),
+            settingCellModel(title: "Help / Feedback",
+                             handler: { [weak self] in
+                                 self?.openURL(type: .help)
+                             })
+        ])
+        data.append([
             settingCellModel(title: "Log Out",
                              handler: { [weak self] in
                                  self?.didTapLogOut()
                              })
-        ]
-        data.append(section)
+        ])
     }
+    
+    enum SettingsURLType {
+        case terms, privacy, help
+    }
+    
+    private func openURL(type: SettingsURLType) {
+        let urlString: String
+        switch type {
+        case .terms: urlString = "https://help.instagram.com/581066165581870"
+        case .privacy: urlString = "https://help.instagram.com/155833707900388"
+        case .help:  urlString = "https://help.instagram.com/"
+        }
+        
+        guard let url = URL(string: urlString) else { return }
+        let vc = SFSafariViewController(url: url)
+        present(vc, animated: true)
+    }
+    
+
+    
+    private func didTapEditProfile() {
+        let vc = EditProfileViewController()
+        vc.title = "Edit Profile"
+        let navVC = UINavigationController(rootViewController: vc)
+        present(navVC, animated: true)
+    }
+    
+    private func didTapInviteFriends() {
+        
+    }
+    
+    private func didTapSaveOriginalPosts() {
+        
+    }
+    
     
     private func didTapLogOut() {
         let actionSheet = UIAlertController(title: "Log Out",
@@ -89,6 +152,7 @@ extension SettingsViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = data[indexPath.section][indexPath.row].title
+        cell.accessoryType = .disclosureIndicator
         return cell
     }
     
